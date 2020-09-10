@@ -25,7 +25,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Example usage description</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Example usage description</string>
+	<string>"独立相册"需要访问您的照片库以添加和保存图片</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
