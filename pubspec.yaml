@@ -35,6 +35,7 @@ dependencies:
   image_gallery_saver: ^1.5.0
   gesture_recognition: ^1.0.1
   multi_image_picker: ^4.6.1
+  provider: ^4.3.2+2
 
 dev_dependencies: 
   flutter_test:

@@ -1,6 +1,7 @@
 //首页
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:serious_album/album_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'albumroute.dart';
 import 'dart:io';
@@ -8,24 +9,36 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as pth;
 import 'package:gesture_recognition/gesture_view.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  Color _themeColor;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '独立相册',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      darkTheme: ThemeData.dark(),
-      home: MyHomePage(album: 1),
-    );
+    return MultiProvider(
+        providers: [ChangeNotifierProvider.value(value: AppInfoProvider())],
+        child: Consumer<AppInfoProvider>(builder: (context, appInfo, _) {
+          String colorKey = appInfo.themeColor;
+          if (themeColorMap[colorKey] != null) {
+            _themeColor = themeColorMap[colorKey];
+          }
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: '独立相册',
+            theme: ThemeData(
+              primaryColor: _themeColor,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            darkTheme: ThemeData(brightness: Brightness.dark,
+              primaryColor: _themeColor),
+            home: MyHomePage(album: 1),
+          );
+        }));
   }
 }
 
@@ -53,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int existmax;
   List<String> dropalbum = [];
   File backimage;
+  String _colorKey;
 
   void changeAlbumName() {
     _namemode = !_namemode;
@@ -248,9 +262,9 @@ class _MyHomePageState extends State<MyHomePage> {
             content: Text("您确定要删除当前相册吗？"),
             actions: <Widget>[
               FlatButton(
-                  child: Text("点错了"), onPressed: () => Navigator.pop(context)),
+                  child: Text("点错了",style: TextStyle(color: Theme.of(context).primaryColor)), onPressed: () => Navigator.pop(context)),
               FlatButton(
-                  child: Text("删除"),
+                  child: Text("删除",style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context, true))
             ],
           );
@@ -266,9 +280,9 @@ class _MyHomePageState extends State<MyHomePage> {
             content: Text("您确定要清空首页相册吗？"),
             actions: <Widget>[
               FlatButton(
-                  child: Text("点错了"), onPressed: () => Navigator.pop(context)),
+                  child: Text("点错了",style: TextStyle(color: Theme.of(context).primaryColor)), onPressed: () => Navigator.pop(context)),
               FlatButton(
-                  child: Text("清空"),
+                  child: Text("清空",style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context, true))
             ],
           );
@@ -285,6 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onTap: () {
                   showSecrectDialog();
                 }),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             content: Padding(
                 padding: EdgeInsets.only(left: 15),
                 child:
@@ -313,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ])),
             actions: [
               FlatButton(
-                  child: Text("知道了"), onPressed: () => Navigator.pop(context))
+                  child: Text("知道了",style: TextStyle(color: Theme.of(context).primaryColor)), onPressed: () => Navigator.pop(context))
             ],
           );
         });
@@ -325,6 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context) {
           return AlertDialog(
             title: Text("悄悄帮助"),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             content: Padding(
               padding: EdgeInsets.only(left: 15),
               child: Row(children: <Widget>[
@@ -335,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             actions: [
               FlatButton(
-                  child: Text("小声:知道了"),
+                  child: Text("小声:知道了",style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context))
             ],
           );
@@ -394,9 +410,25 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> getColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.get('key_theme_color') != null) {
+      _colorKey = prefs.get('key_theme_color');
+    } else {
+      _colorKey = 'bluegrey';
+    }
+    Provider.of<AppInfoProvider>(context, listen: false).setTheme(_colorKey);
+  }
+
+  Future<void> setColor(String color) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('key_theme_color', color);
+  }
+
   @override
   void initState() {
     getAlbum();
+    getColor();
     getName();
     getexistMax(maxalbum);
     getBackImage();
@@ -426,7 +458,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Center(
                       child: GestureView(
                     showUnSelectRing: false,
-                    selectColor: Colors.blueGrey,
+                    unSelectColor: Colors.white,
+                    selectColor: Theme.of(context).primaryColor,
                     immediatelyClear: true,
                     size: 0.8 * width,
                     onPanUp: (List<int> items) {
@@ -437,7 +470,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   )),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.zero,bottom: Radius.circular(12)),
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.zero, bottom: Radius.circular(12)),
                       image: backimage == null
                           ? null
                           : DecorationImage(
@@ -445,13 +479,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.blueGrey[900],
-                            Colors.blueGrey[700],
-                            Colors.blueGrey[500],
-                            Colors.blueGrey[300],
-                            Colors.blueGrey[100]
-                          ])))
+                          colors: _colorKey=='bluegrey'?[
+                              Colors.blueGrey[900],
+                              Colors.blueGrey[200]
+                            ]:[Colors.red[900],
+                              Colors.red[200]])))
               : GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onHorizontalDragUpdate: (details) {
@@ -460,7 +492,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: _settingmode ? setbackImage : () {},
                   child: Container(
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.vertical(top: Radius.zero,bottom: Radius.circular(12)),
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.zero, bottom: Radius.circular(12)),
                         image: backimage == null
                             ? null
                             : DecorationImage(
@@ -468,13 +501,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
+                            colors: _colorKey=='bluegrey'?[
                               Colors.blueGrey[900],
-                              Colors.blueGrey[700],
-                              Colors.blueGrey[500],
-                              Colors.blueGrey[300],
                               Colors.blueGrey[200]
-                            ])),
+                            ]:[Colors.red[900],
+                              Colors.red[200]])),
                   )),
         ),
         body: GestureDetector(
@@ -553,6 +584,37 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: _settingmode
                               ? Column(children: <Widget>[
                                   Padding(
+                                    padding:
+                                        EdgeInsets.only(bottom: 0.025 * height),
+                                    child: widget.album == 1
+                                        ? FlatButton(
+                                            shape: CircleBorder(),
+                                            child: Icon(Icons.color_lens,
+                                                color: Colors.white, size: 30),
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            padding:
+                                                EdgeInsets.all(0.04 * width),
+                                            onPressed: () {
+                                              setState(() {
+                                                var _list = [
+                                                  'bluegrey',
+                                                  'red'
+                                                ];
+                                                _colorKey = _list[
+                                                    (_list.indexOf(_colorKey) +
+                                                            1) %
+                                                        2];
+                                              });
+                                              setColor(_colorKey);
+                                              Provider.of<AppInfoProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .setTheme(_colorKey);
+                                            })
+                                        : Container(),
+                                  ),
+                                  Padding(
                                       padding: EdgeInsets.only(
                                           bottom: 0.025 * height),
                                       child: FlatButton(
@@ -582,7 +644,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         shape: CircleBorder(),
                                         child: Icon(Icons.add,
                                             color: Colors.white, size: 30),
-                                        color: Colors.blueGrey[400],
+                                        color: Theme.of(context).primaryColor,
                                         padding: EdgeInsets.all(0.04 * width),
                                         onPressed: () {
                                           maxalbum = maxalbum + 1;
@@ -598,7 +660,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   FlatButton(
                                       color: widget.album == 1
-                                          ? Colors.teal
+                                          ? Colors.grey
                                           : Colors.orange[800],
                                       shape: CircleBorder(),
                                       child: Icon(
@@ -645,7 +707,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 18),
                                   ),
-                                  color: Colors.blueGrey,
+                                  color: Theme.of(context).primaryColor,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(28)),
                                   onPressed: () {
@@ -670,7 +732,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: Icon(
                                           Icons.help,
                                           color: _settingmode
-                                              ? Colors.blueGrey
+                                              ? Theme.of(context).primaryColor
                                               : Colors.transparent,
                                         ),
                                         onTap: () {
@@ -686,7 +748,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       child: GestureDetector(
                                         child: Icon(
                                           Icons.settings,
-                                          color: Colors.blueGrey,
+                                          color: Theme.of(context).primaryColor,
                                         ),
                                         onTap: () {
                                           setState(() {

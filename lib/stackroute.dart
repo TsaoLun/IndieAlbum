@@ -56,6 +56,7 @@ class _StackRouteState extends State<StackRoute> {
         builder: (context) {
           return AlertDialog(
             title: Text("帮助"),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             content: Padding(
                 padding: EdgeInsets.only(left: 15),
                 child:
@@ -76,7 +77,7 @@ class _StackRouteState extends State<StackRoute> {
                 ])),
             actions: [
               FlatButton(
-                  child: Text("知道了"), onPressed: () => Navigator.pop(context))
+                  child: Text("知道了",style: TextStyle(color: Theme.of(context).primaryColor)), onPressed: () => Navigator.pop(context))
             ],
           );
         });
@@ -140,7 +141,7 @@ class _StackRouteState extends State<StackRoute> {
                             alignment: Alignment.bottomCenter,
                             padding: EdgeInsets.only(top: 0.25 * height),
                             child: Text('尚未选择任何照片',
-                                style: TextStyle(fontSize: 30)))
+                                style: TextStyle(fontSize: 24)))
                         : GestureDetector(
                             //套上一层GDetector，dropmode下为选择，否则实现点击加载
                             onTap: () => widget.dropmode
@@ -192,7 +193,7 @@ class _StackRouteState extends State<StackRoute> {
                   ? Text('已选图片 ${widget.droplist.length} 张: ' +
                       widget.droplist.toString())
                   : Text("相册图片 ${widget.imagelist.length} 张"),
-              backgroundColor: _hidebar ? Colors.transparent : Colors.blueGrey,
+              backgroundColor: _hidebar ? Colors.transparent : Theme.of(context).primaryColor,
               actions: [
                 IconButton(
                     icon: Icon(grid ? Icons.collections : Icons.grid_on),

@@ -149,9 +149,9 @@ class _PickerPageState extends State<PickerPage> {
             children: [
               IconButton(
                   icon: dropmode
-                      ? Icon(Icons.save, size: 34, color: Colors.blueGrey[300])
+                      ? Icon(Icons.save, size: 34, color: Theme.of(context).primaryColor)
                       : Icon(Icons.insert_photo,
-                          size: 30, color: Colors.blueGrey[300]),
+                          size: 30, color: Theme.of(context).primaryColor),
                   onPressed: () => dropmode
                       ? setState(() {
                           droplist.forEach((element) {
@@ -166,9 +166,9 @@ class _PickerPageState extends State<PickerPage> {
               IconButton(
                 icon: dropmode
                     ? Icon(Icons.check_box,
-                        size: 34, color: Colors.blueGrey[300])
+                        size: 34, color: Theme.of(context).primaryColor)
                     : Icon(Icons.check_box,
-                        size: 28, color: Colors.blueGrey[300]),
+                        size: 28, color: Theme.of(context).primaryColor),
                 onPressed: () => setState(() {
                   dropmode = !dropmode;
                   droplist = [];
@@ -178,7 +178,7 @@ class _PickerPageState extends State<PickerPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
           )),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: dropmode ? Colors.orange[800] : Colors.blueGrey,
+        backgroundColor: dropmode ? Colors.orange[800] : Theme.of(context).primaryColor,
         onPressed: dropmode ? dropImage : getImage,
         tooltip: 'Pick Image',
         child: dropmode
