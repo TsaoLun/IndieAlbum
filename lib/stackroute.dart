@@ -56,7 +56,8 @@ class _StackRouteState extends State<StackRoute> {
         builder: (context) {
           return AlertDialog(
             title: Text("帮助"),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             content: Padding(
                 padding: EdgeInsets.only(left: 15),
                 child:
@@ -77,7 +78,9 @@ class _StackRouteState extends State<StackRoute> {
                 ])),
             actions: [
               FlatButton(
-                  child: Text("知道了",style: TextStyle(color: Theme.of(context).primaryColor)), onPressed: () => Navigator.pop(context))
+                  child: Text("知道了",
+                      style: TextStyle(color: Theme.of(context).primaryColor)),
+                  onPressed: () => Navigator.pop(context))
             ],
           );
         });
@@ -161,18 +164,21 @@ class _StackRouteState extends State<StackRoute> {
                                             controller: _controller,
                                             grid: grid,
                                             height: _height))),
-                            child: Opacity(opacity: widget.droplist.contains(index+1)?0.6:1,child:ClipRect(
-                                //不同预览图裁剪模式
-                                child: Image.file(
-                              widget.imagelist[index],
-                              
-                              cacheHeight: grid ? 500 : null,
-                              scale: grid == false ? 0.3 : 0.01,
-                              filterQuality: FilterQuality.low,
-                              fit: grid == false
-                                  ? BoxFit.fitWidth
-                                  : BoxFit.cover,
-                            ))));
+                            child: Opacity(
+                                opacity: widget.droplist.contains(index + 1)
+                                    ? 0.6
+                                    : 1,
+                                child: ClipRect(
+                                    //不同预览图裁剪模式
+                                    child: Image.file(
+                                  widget.imagelist[index],
+                                  cacheHeight: grid ? 500 : null,
+                                  scale: grid == false ? 0.3 : 0.01,
+                                  filterQuality: FilterQuality.low,
+                                  fit: grid == false
+                                      ? BoxFit.fitWidth
+                                      : BoxFit.cover,
+                                ))));
                   }))),
       //图片上层的AppBar，距离底部710 (接受适配折磨吧)
       Positioned(
@@ -193,13 +199,16 @@ class _StackRouteState extends State<StackRoute> {
                   ? Text('已选图片 ${widget.droplist.length} 张: ' +
                       widget.droplist.toString())
                   : Text("相册图片 ${widget.imagelist.length} 张"),
-              backgroundColor: _hidebar ? Colors.transparent : Theme.of(context).primaryColor,
+              backgroundColor: _hidebar
+                  ? Colors.transparent
+                  : Theme.of(context).primaryColor,
               actions: [
                 IconButton(
                     icon: Icon(grid ? Icons.collections : Icons.grid_on),
                     onPressed: () {
                       setState(() {
                         grid = !grid;
+                        _hidebar = false;
                         imageCache.clear();
                       });
                     })
