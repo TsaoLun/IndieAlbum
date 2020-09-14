@@ -2,6 +2,9 @@
 import 'package:serious_album/main.dart';
 import 'pageview.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'album_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StackRoute extends StatefulWidget {
   StackRoute(
@@ -27,8 +30,23 @@ class _StackRouteState extends State<StackRoute> {
   //监听滚动
   ScrollController _controller = ScrollController(initialScrollOffset: -1);
 
+//注意是getBool不是get
+  Future<void> getGrid() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('grid') != null) {
+      grid = prefs.getBool('grid');
+    }
+    Provider.of<AppInfoProvider>(context, listen: false).setGrid(grid);
+  }
+
+  setGrid() async {
+    await SharedPreferences.getInstance()
+        .then((prefs) => prefs.setBool('grid', !grid));
+  }
+
   @override
   void initState() {
+    getGrid();
     _controller.addListener(() {
       //监听滚动高度以打开透明模式
       if (_controller.offset < 50 && _hidebar) {
@@ -124,63 +142,65 @@ class _StackRouteState extends State<StackRoute> {
                           }));
                 }
               },
-              child: GridView.builder(
-                  controller: _controller,
-                  padding: EdgeInsets.only(top: 0.22 * width),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      //间距以及不同模式宽高，列数
-                      crossAxisSpacing: 1,
-                      mainAxisSpacing: 1,
-                      childAspectRatio: grid == false ? 1 / 0.65 : 1,
-                      crossAxisCount: grid == false ? 1 : 3),
-                  //itemCount最小为1
-                  itemCount: widget.imagelist.length == 0
-                      ? 1
-                      : widget.imagelist.length,
-                  itemBuilder: (context, index) {
-                    //图片列表为空时提示，存在直接则加载
-                    return widget.imagelist.length == 0
-                        ? Container(
-                            alignment: Alignment.bottomCenter,
-                            padding: EdgeInsets.only(top: 0.25 * height),
-                            child: Text('尚未选择任何照片',
-                                style: TextStyle(fontSize: 24)))
-                        : GestureDetector(
-                            //套上一层GDetector，dropmode下为选择，否则实现点击加载
-                            onTap: () => widget.dropmode
-                                ? setState(
-                                    () => !widget.droplist.contains(index + 1)
-                                        //dropmode下判断点击图片index在不在list中
-                                        ? widget.droplist.add(index + 1)
-                                        : widget.droplist.remove(index + 1))
-                                : Navigator.push(
-                                    //非dropmode下点击进入全屏模式
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PageViewRoute(
-                                            imagelist: widget.imagelist,
-                                            index: index,
-                                            firstindex: index,
-                                            controller: _controller,
-                                            grid: grid,
-                                            height: _height))),
-                            child: Opacity(
-                                opacity: widget.droplist.contains(index + 1)
-                                    ? 0.6
-                                    : 1,
-                                child: ClipRect(
-                                    //不同预览图裁剪模式
-                                    child: Image.file(
-                                  widget.imagelist[index],
-                                  cacheHeight: grid ? 500 : null,
-                                  scale: grid == false ? 0.3 : 0.01,
-                                  filterQuality: FilterQuality.low,
-                                  fit: grid == false
-                                      ? BoxFit.fitWidth
-                                      : BoxFit.cover,
-                                ))));
-                  }))),
-      //图片上层的AppBar，距离底部710 (接受适配折磨吧)
+              child: Consumer<AppInfoProvider>(builder: (context, appInfo, _) {
+                grid = appInfo.gridmode;
+                return GridView.builder(
+                    controller: _controller,
+                    padding: EdgeInsets.only(top: 0.22 * width),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        //间距以及不同模式宽高，列数
+                        crossAxisSpacing: 1,
+                        mainAxisSpacing: 1,
+                        childAspectRatio: grid == false ? 1 / 0.65 : 1,
+                        crossAxisCount: grid == false ? 1 : 3),
+                    //itemCount最小为1
+                    itemCount: widget.imagelist.length == 0
+                        ? 1
+                        : widget.imagelist.length,
+                    itemBuilder: (context, index) {
+                      //图片列表为空时提示，存在直接则加载
+                      return widget.imagelist.length == 0
+                          ? Container(
+                              alignment: Alignment.bottomCenter,
+                              padding: EdgeInsets.only(top: 0.25 * height),
+                              child: Text('尚未选择任何照片',
+                                  style: TextStyle(fontSize: 24)))
+                          : GestureDetector(
+                              //套上一层GDetector，dropmode下为选择，否则实现点击加载
+                              onTap: () => widget.dropmode
+                                  ? setState(
+                                      () => !widget.droplist.contains(index + 1)
+                                          //dropmode下判断点击图片index在不在list中
+                                          ? widget.droplist.add(index + 1)
+                                          : widget.droplist.remove(index + 1))
+                                  : Navigator.push(
+                                      //非dropmode下点击进入全屏模式
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PageViewRoute(
+                                              imagelist: widget.imagelist,
+                                              index: index,
+                                              firstindex: index,
+                                              controller: _controller,
+                                              grid: grid,
+                                              height: _height))),
+                              child: Opacity(
+                                  opacity: widget.droplist.contains(index + 1)
+                                      ? 0.6
+                                      : 1,
+                                  child: ClipRect(
+                                      //不同预览图裁剪模式
+                                      child: Image.file(
+                                    widget.imagelist[index],
+                                    cacheHeight: grid ? 500 : null,
+                                    scale: grid == false ? 0.3 : 0.01,
+                                    filterQuality: FilterQuality.low,
+                                    fit: grid == false
+                                        ? BoxFit.fitWidth
+                                        : BoxFit.cover,
+                                  ))));
+                    });
+              }))),
       Positioned(
           top: 0,
           left: 0,
@@ -203,15 +223,16 @@ class _StackRouteState extends State<StackRoute> {
                   ? Colors.transparent
                   : Theme.of(context).primaryColor,
               actions: [
-                IconButton(
-                    icon: Icon(grid ? Icons.collections : Icons.grid_on),
-                    onPressed: () {
-                      setState(() {
-                        grid = !grid;
+                Consumer<AppInfoProvider>(builder: (context, appInfo, _) {
+                  return IconButton(
+                      icon: Icon(grid ? Icons.collections : Icons.grid_on),
+                      onPressed: () {
+                        appInfo.changeGrid();
+                        setGrid();
                         _hidebar = false;
                         imageCache.clear();
                       });
-                    })
+                })
               ]))
     ]);
   }

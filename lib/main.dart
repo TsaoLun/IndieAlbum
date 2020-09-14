@@ -255,6 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text("提示"),
             content: Text("您确定要删除当前相册吗？"),
             actions: <Widget>[
@@ -276,6 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text("提示"),
             content: Text("您确定要清空首页相册吗？"),
             actions: <Widget>[
