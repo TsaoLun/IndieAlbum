@@ -15,7 +15,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final appInfo = AppInfoProvider();
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
