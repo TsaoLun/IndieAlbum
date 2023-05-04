@@ -10,7 +10,7 @@ class StackRoute extends StatefulWidget {
   StackRoute(
       {Key key,
       @required this.imagelist,
-      this.dropmode: false,
+      this.dropmode = false,
       this.droplist,
       this.album})
       : super(key: key);
