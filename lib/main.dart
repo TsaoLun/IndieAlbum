@@ -1,5 +1,4 @@
 //首页
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:serious_album/album_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -255,15 +254,16 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text("提示"),
             content: Text("您确定要删除当前相册吗？"),
             actions: <Widget>[
-              FlatButton(
+              MaterialButton(
                   child: Text("点错了",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context)),
-              FlatButton(
+              MaterialButton(
                   child: Text("删除",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context, true))
@@ -277,15 +277,16 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text("提示"),
             content: Text("您确定要清空首页相册吗？"),
             actions: <Widget>[
-              FlatButton(
+              MaterialButton(
                   child: Text("点错了",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context)),
-              FlatButton(
+              MaterialButton(
                   child: Text("清空",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context, true))
@@ -333,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ]),
                 ])),
             actions: [
-              FlatButton(
+              MaterialButton(
                   child: Text("知道了",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context))
@@ -359,7 +360,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ]),
             ),
             actions: [
-              FlatButton(
+              MaterialButton(
                   child: Text("小声:知道了",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context))
@@ -487,7 +488,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.vertical(
                           top: Radius.zero, bottom: Radius.circular(12)),
-                  
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -583,7 +583,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 padding: EdgeInsets.only(top: 0.1 * height),
                                 child: Text(_settingmode ? '' : albumname,
                                     style: TextStyle(fontSize: 25))),
-                        onTap: _settingmode||lockmode||unlocking ? () {} : changeAlbumName,
+                        onTap: _settingmode || lockmode || unlocking
+                            ? () {}
+                            : changeAlbumName,
                       )),
                       Padding(
                           padding: _namemode
@@ -595,7 +597,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     padding:
                                         EdgeInsets.only(bottom: 0.025 * height),
                                     child: widget.album == 1
-                                        ? FlatButton(
+                                        ? MaterialButton(
                                             shape: CircleBorder(),
                                             child: Icon(Icons.color_lens,
                                                 color: Colors.white, size: 30),
@@ -616,7 +618,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Padding(
                                       padding: EdgeInsets.only(
                                           bottom: 0.025 * height),
-                                      child: FlatButton(
+                                      child: MaterialButton(
                                         child: Icon(
                                             lockmode
                                                 ? Icons.lock_open
@@ -639,7 +641,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Padding(
                                     padding:
                                         EdgeInsets.only(bottom: 0.025 * height),
-                                    child: FlatButton(
+                                    child: MaterialButton(
                                         shape: CircleBorder(),
                                         child: Icon(Icons.add,
                                             color: Colors.white, size: 30),
@@ -657,7 +659,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                           album: maxalbum)));
                                         }),
                                   ),
-                                  FlatButton(
+                                  MaterialButton(
                                       color: widget.album == 1
                                           ? Colors.grey
                                           : Colors.orange[800],
@@ -699,7 +701,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               }
                                             })
                                 ])
-                              : FlatButton(
+                              : MaterialButton(
                                   padding: EdgeInsets.all(16),
                                   child: Text(
                                     _namemode ? '确认' : '进入相册',

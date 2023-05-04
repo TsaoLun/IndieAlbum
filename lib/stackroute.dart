@@ -95,7 +95,7 @@ class _StackRouteState extends State<StackRoute> {
                   ]),
                 ])),
             actions: [
-              FlatButton(
+              MaterialButton(
                   child: Text("知道了",
                       style: TextStyle(color: Theme.of(context).primaryColor)),
                   onPressed: () => Navigator.pop(context))
